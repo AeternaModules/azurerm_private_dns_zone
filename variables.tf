@@ -22,12 +22,12 @@ EOT
     tags                = optional(map(string))
     soa_record = optional(object({
       email        = string
-      expire_time  = optional(number, 2419200)
-      minimum_ttl  = optional(number, 10)
-      refresh_time = optional(number, 3600)
-      retry_time   = optional(number, 300)
+      expire_time  = optional(number) # Default: 2419200
+      minimum_ttl  = optional(number) # Default: 10
+      refresh_time = optional(number) # Default: 3600
+      retry_time   = optional(number) # Default: 300
       tags         = optional(map(string))
-      ttl          = optional(number, 3600)
+      ttl          = optional(number) # Default: 3600
     }))
   }))
 }
