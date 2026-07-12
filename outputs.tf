@@ -1,3 +1,7 @@
+output "private_dns_zones_id" {
+  description = "Map of id values across all private_dns_zones, keyed the same as var.private_dns_zones"
+  value       = { for k, v in azurerm_private_dns_zone.private_dns_zones : k => v.id }
+}
 output "private_dns_zones_max_number_of_record_sets" {
   description = "Map of max_number_of_record_sets values across all private_dns_zones, keyed the same as var.private_dns_zones"
   value       = { for k, v in azurerm_private_dns_zone.private_dns_zones : k => v.max_number_of_record_sets }
