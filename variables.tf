@@ -22,46 +22,14 @@ EOT
     tags                = optional(map(string))
     soa_record = optional(object({
       email        = string
-      expire_time  = optional(number) # Default: 2419200
-      minimum_ttl  = optional(number) # Default: 10
-      refresh_time = optional(number) # Default: 3600
-      retry_time   = optional(number) # Default: 300
+      expire_time  = optional(number)
+      minimum_ttl  = optional(number)
+      refresh_time = optional(number)
+      retry_time   = optional(number)
       tags         = optional(map(string))
-      ttl          = optional(number) # Default: 3600
+      ttl          = optional(number)
     }))
   }))
-  validation {
-    condition = alltrue([
-      for k, v in var.private_dns_zones : (
-        v.soa_record == null || (v.soa_record.expire_time == null || (v.soa_record.expire_time >= 0))
-      )
-    ])
-    error_message = "must be at least 0"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.private_dns_zones : (
-        v.soa_record == null || (v.soa_record.minimum_ttl == null || (v.soa_record.minimum_ttl >= 0))
-      )
-    ])
-    error_message = "must be at least 0"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.private_dns_zones : (
-        v.soa_record == null || (v.soa_record.refresh_time == null || (v.soa_record.refresh_time >= 0))
-      )
-    ])
-    error_message = "must be at least 0"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.private_dns_zones : (
-        v.soa_record == null || (v.soa_record.retry_time == null || (v.soa_record.retry_time >= 0))
-      )
-    ])
-    error_message = "must be at least 0"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_private_dns_zone's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -96,6 +64,18 @@ EOT
   #   source:    [from validate.PrivateDnsZoneSOARecordEmail: invalid when len(value) > 63]
   # path: soa_record.email
   #   source:    [from validate.PrivateDnsZoneSOARecordEmail] !regexp.MustCompile(`^[a-zA-Z\d._-]+$`).MatchString(value)
+  # path: soa_record.expire_time
+  #   condition: value >= 0
+  #   message:   must be at least 0
+  # path: soa_record.minimum_ttl
+  #   condition: value >= 0
+  #   message:   must be at least 0
+  # path: soa_record.refresh_time
+  #   condition: value >= 0
+  #   message:   must be at least 0
+  # path: soa_record.retry_time
+  #   condition: value >= 0
+  #   message:   must be at least 0
   # path: soa_record.ttl
   #   source:    validation.IntBetween(0, math.MaxInt32) - bound(s) not a literal int (e.g. a named constant like math.MaxInt32) - resolve manually
   # path: soa_record.tags
